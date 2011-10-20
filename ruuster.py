@@ -11,7 +11,7 @@ def fetch_schedule(room_ids, inst_id):
             for each room the current or first event. """
         ret = {}
         now = datetime.datetime.now()
-        day = DAYS[now.isoweekday() + 1]
+        day = DAYS[now.isoweekday() - 1]
         for room_name in room_ids:
                 nigh_event = None
                 events = msgpack.unpack(urllib2.urlopen(
