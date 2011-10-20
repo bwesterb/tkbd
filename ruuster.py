@@ -30,11 +30,12 @@ def fetch_schedule(room_ids, inst_id):
                         for period in event['eventperiods']:
                                 startdate = datetime.datetime.strptime(
                                                 period['startdate'],
-                                                '%Y-%m-%d %H:%M:%SZ')
+                                                '%Y-%m-%d %H:%M:%SZ').date()
                                 enddate = datetime.datetime.strptime(
                                                 period['enddate'],
-                                                '%Y-%m-%d %H:%M:%SZ')
-                                if startdate <= now and now <= enddate:
+                                                '%Y-%m-%d %H:%M:%SZ').date()
+                                if (startdate <= now.date()
+                                                and now.date() <= enddate):
                                         ok = True
                                         break
                         if not ok:
