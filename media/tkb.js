@@ -53,6 +53,7 @@ var update = function() {
                 for (var room in room_lut) {
                         if (!rooms_seen[room]) {
                                 room_lut[room].remove();
+                                delete room_lut[room];
                         }
                 }
                 // set next timeout
