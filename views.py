@@ -11,7 +11,9 @@ from tkb.ruuster import fetch_schedule, fetch_inst_id, fetch_room_ids
 
 import mimetypes
 import datetime
+import logging
 import os.path
+import urllib2
 import json
 import os
 
@@ -40,6 +42,7 @@ def home(request):
 @cache_page(5)
 def api(request):
         """ Returns the occupation """
+        l = logging.getLogger(__name__ + '.api')
         ret = {'format': 1,
                'generated': str(datetime.datetime.now())}
         # scrape occupation from ru.nl
@@ -47,16 +50,23 @@ def api(request):
         # fetch schedule from api.ruuster.nl
         schedule = cache.get('schedule')
         if schedule is None: # cache miss
-                room_ids = cache.get('ruuster-roomids')
-                if room_ids is None: # cache miss
-                        room_ids = fetch_room_ids(occup.keys())
-                        cache.set('ruuster-roomids', room_ids, 60*60)
-                inst_id = cache.get('ruuster-instid')
-                if inst_id is None: # cache miss
-                        inst_id = fetch_inst_id()
-                        cache.set('ruuster-instid', inst_id, 60*60)
-                schedule = fetch_schedule(room_ids, inst_id)
-                cache.set('schedule', schedule, 60)
+                try:
+                        room_ids = cache.get('ruuster-roomids')
+                        if room_ids is None: # cache miss
+                                room_ids = fetch_room_ids(occup.keys())
+                                cache.set('ruuster-roomids', room_ids, 60*60)
+                        inst_id = cache.get('ruuster-instid')
+                        if inst_id is None: # cache miss
+                                inst_id = fetch_inst_id()
+                                cache.set('ruuster-instid', inst_id, 60*60)
+                        schedule = fetch_schedule(room_ids, inst_id)
+                        cache.set('schedule', schedule, 60)
+                except urllib2.HTTPError:
+                        # We do not want our service to be down, when
+                        # ruuster is down.
+                        # TODO be agnostic of ruuster.py's usage of urllib2
+                        l.exception("HTTPError from ruuster")
+                        schedule = {}
         # combine
         rooms = ret['rooms'] = []
         for room_name in occup:
