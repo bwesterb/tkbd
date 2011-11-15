@@ -7,6 +7,7 @@ from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from django.core.cache import cache
 
+from tkb.http import JsonishHttpResponse
 from tkb.scraper import scrape_bezetting
 from tkb.ruuster import fetch_schedule, fetch_inst_id, fetch_room_ids
 
@@ -40,10 +41,7 @@ def home(request):
     return render_to_response('home.html',
             context_instance=RequestContext(request))
 
-@cache_page(5)
-def api(request):
-    """ Returns the occupation """
-    l = logging.getLogger(__name__ + '.api')
+def _api():
     ret = {'format': 1,
            'generated': str(datetime.datetime.now())}
     # scrape occupation from ru.nl
@@ -84,5 +82,14 @@ def api(request):
             'reservation': res})
     # sort rooms by name
     rooms.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
-    return HttpResponse(json.dumps(ret),
-            mimetype='application/json')
+    return ret
+
+def api(request):
+    """ Returns the occupation """
+    l = logging.getLogger(__name__ + '.api')
+    ret = cache.get('views-api')
+    if ret is None:
+        ret = _api()
+        cache.set('views-api', ret, 5)
+    return JsonishHttpResponse(ret,
+            format=request.REQUEST.get('format', 'json'))
