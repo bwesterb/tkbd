@@ -5,9 +5,12 @@ en Informatica_ of _the Radboud Universiteit Nijmegen_.
 Installation
 ------------
 
-- Install the Python packages `python-msgpack` and `BeatifulSoup`.
+- Install the Python packages:
+    - python-msgpack
+    - BeautifulSoup
+    - lockfile
 - Copy `settings.example.py` to `settings.py` and change `SECRET_KEY` to
-  something random and secret; and `MEDIA_ROOT` to the path to
-  the `/media` folder.
+  something random and secret; `MEDIA_ROOT` to the path to the `/media` folder
+  and `STATE_DIR` to an appropriate directory (eg. "/var/lib/tkb").
 - Run `./manage.py runserver` to test the installation.
 - Consult `./manage.py runfcgi --help` to run it properly.

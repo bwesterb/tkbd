@@ -8,5 +8,6 @@ urlpatterns = patterns('',
         url(r'^static/(?P<path>.*)$', views.direct_to_folder,
                 {'root': settings.MEDIA_ROOT}),
         url(r'^api/?$', views.api, name='api'),
+        url(r'^push/?$', views.push, name='push'),
         url(r'^$', views.home)
 )

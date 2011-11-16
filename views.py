@@ -1,4 +1,5 @@
 # vim: et:sta:bs=2:sw=4:
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
 from django.core.servers.basehttp import FileWrapper
 from django.core.exceptions import PermissionDenied
@@ -8,8 +9,8 @@ from django.template import RequestContext
 from django.core.cache import cache
 
 from tkb.http import JsonishHttpResponse
-from tkb.scraper import scrape_bezetting
 from tkb.ruuster import fetch_schedule, fetch_inst_id, fetch_room_ids
+from tkb.state import set_occupation_of_multiple, get_occupation
 
 import mimetypes
 import datetime
@@ -44,8 +45,16 @@ def home(request):
 def _api():
     ret = {'format': 1,
            'generated': str(datetime.datetime.now())}
-    # scrape occupation from ru.nl
-    occup = scrape_bezetting()
+    # generate occupation by room
+    occup = {}
+    for pc, state in get_occupation().items():
+        room = pc.split('pc')[0]
+        if not room in occup:
+            occup[room] = [0, 0]
+        if state['status'] == 'free':
+            occup[room][0] += 1
+        else:
+            occup[room][1] += 1
     # fetch schedule from api.ruuster.nl
     schedule = cache.get('schedule')
     if schedule is None: # cache miss
@@ -90,6 +99,25 @@ def api(request):
     ret = cache.get('views-api')
     if ret is None:
         ret = _api()
-        cache.set('views-api', ret, 5)
+        cache.set('views-api', ret, 1)
     return JsonishHttpResponse(ret,
             format=request.REQUEST.get('format', 'json'))
+
+@csrf_exempt
+def push(request):
+    """ Called by our datasource to push changes to occupation """
+    l = logging.getLogger(__name__ + '.push')
+    # TODO authenticate client
+    d = json.loads(request.raw_post_data)
+    l.debug("received: %s" % repr(d))
+    # We expect
+    #  { 'datasoure': 'scan' | 'log',
+    #    'data': { <pc>: {'status': 'free' | 'used' | 'unknown',
+    #                     'session': 'windows' | 'linux' } } }
+    source = d.get('datasource', 'unknown')
+    occ_updates = {}
+    for pc, state in d['data'].items():
+        occ_updates[pc] = {'status': state.get('status'),
+                           'session': state.get('session')}
+    set_occupation_of_multiple(occ_updates)
+    return JsonishHttpResponse(True)

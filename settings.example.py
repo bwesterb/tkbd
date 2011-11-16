@@ -27,3 +27,4 @@ INSTALLED_APPS = (
 
 MEDIA_ROOT = '/change/me'
 SECRET_KEY = 'CHANGE ME'
+STATE_DIR = '/change/me'
