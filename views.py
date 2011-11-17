@@ -107,13 +107,13 @@ def _api():
     rooms.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
     return ret
 
-def api(request):
-    """ Returns the occupation """
-    l = logging.getLogger(__name__ + '.api')
-    ret = cache.get('views-api')
+def api_by_room(request):
+    """ Returns the occupation by rooms """
+    l = logging.getLogger(__name__ + '.api_by_room')
+    ret = cache.get('api-by-room')
     if ret is None:
         ret = _api()
-        cache.set('views-api', ret, 1)
+        cache.set('api-by-room', ret, 1)
     return JsonishHttpResponse(ret,
             format=request.REQUEST.get('format', 'json'))
 

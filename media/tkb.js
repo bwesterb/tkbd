@@ -43,7 +43,7 @@ var update_room = function(room) {
 
 // fetches the data
 var update = function() {
-    $.getJSON('/api', function(data) {
+    $.getJSON('/api/by-room', function(data) {
         var rooms_seen = {};
         // update rooms
         for (var i = 0; i < data['rooms'].length; i++) {
