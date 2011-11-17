@@ -48,10 +48,24 @@ def _api():
     # generate occupation by room
     occup = {}
     for pc, state in get_occupation().items():
+        # TODO handle this more elegantly
+        # TODO pass more data
         room = pc.split('pc')[0]
+        room = {'hg761': 'HG03.761',
+                'hg206': 'HG02.206',
+                'hg201': 'HG00.201',
+                'hg153': 'HG00.153',
+                'hg137': 'HG00.137',
+                'hg075': 'HG00.075',
+                'hg029': 'HG00.029',
+                'hg023': 'HG00.023',
+                'bib': 'Library of Science',
+                'info': 'Infozuilen'}.get(room, room)
+        if room.startswith('cz') or room == 'riksje':
+            continue
         if not room in occup:
             occup[room] = [0, 0]
-        if state['status'] == 'free':
+        if state['status'] in ('free', 'offline'):
             occup[room][0] += 1
         else:
             occup[room][1] += 1
