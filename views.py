@@ -133,5 +133,5 @@ def push(request):
     for pc, state in d['data'].items():
         occ_updates[pc] = {'status': state.get('status'),
                            'session': state.get('session')}
-    set_occupation_of_multiple(occ_updates)
+    set_occupation_of_multiple(occ_updates, source)
     return JsonishHttpResponse(True)

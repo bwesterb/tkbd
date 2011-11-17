@@ -76,7 +76,7 @@ def get_occupation(acquire_lock=True):
 def set_occupation_of(pc, state):
     set_occupation_of_multiple({pc: state})
 
-def set_occupation_of_multiple(pc_to_states):
+def set_occupation_of_multiple(pc_to_states, source='unknown'):
     with _lock('occupation'):
         occ = get_occupation(acquire_lock=False)
         for pc, state in pc_to_states.items():
@@ -90,6 +90,6 @@ def set_occupation_of_multiple(pc_to_states):
     with _lock('history'):
         with open(_path('history.jsons'), 'a') as f:
             for pc, state in pc_to_states.items():
-                f.write(json.dumps([time.time(), pc, state]))
+                f.write(json.dumps([source, time.time(), pc, state]))
                 f.write("\n")
 
