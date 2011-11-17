@@ -117,6 +117,11 @@ def api_by_room(request):
     return JsonishHttpResponse(ret,
             format=request.REQUEST.get('format', 'json'))
 
+def api_pcs(request):
+    """ Return the occupation per pc """
+    return JsonishHttpResponse(get_occupation(),
+            format=request.REQUEST.get('format', 'json'))
+
 @csrf_exempt
 def push(request):
     """ Called by our datasource to push changes to occupation """
