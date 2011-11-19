@@ -1,5 +1,8 @@
-*.swp
 *.pyo
 *.pyc
-/settings.py
-/state
+*.swp
+/*.egg-info
+/build
+/dist
+MANIFEST
+RELEASE-VERSION

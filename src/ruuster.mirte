@@ -1,0 +1,7 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+includes:
+  - base
+definitions:
+  ruuster:
+    inherits: [ schedule ]
+    implementedBy: tkbd.ruuster.Ruuster

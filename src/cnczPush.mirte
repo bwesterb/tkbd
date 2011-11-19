@@ -1,0 +1,10 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+includes:
+  - sarah/socketServer
+definitions:
+  cnczPush:
+    inherits: [ tcpSocketServer ]
+    implementedBy: tkbd.cnczPush.CnczPush
+    settings:
+      port: { default: 1235 }
+      state: { type: state }
