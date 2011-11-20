@@ -55,7 +55,7 @@ class CnczPushRH(BaseHTTPRequestHandler):
                 expect_session = True
             elif state['status'] == 'unknown':
                 s = 'x'
-            if hasattr(state, 'session'):
+            if 'session' in state:
                 if state['session'] == 'windows':
                     s = 'w' + s
                 elif state['session'] == 'linux':
