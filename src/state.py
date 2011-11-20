@@ -12,19 +12,20 @@ class State(Module):
         self.on_roomMap_changed = Event()
         self.occupation = {}
         self.roomMap = {}
-        self.version = 0
+        self.occupationVersion = 0
+        self.roomMapVersion = 0
         self.lock = threading.Lock()
     def push_occupation_changes(self, occ, source='unknown'):
         roomMap_changed = False
         processed_occ = {}
         with self.lock:
-            self.version += 1
             for pc, state in occ.iteritems():
                 # TODO do not hardcode this
                 if pc.startswith('cz'):
                     continue
-                processed_occ[pc] = state
-                self.occupation[pc] = state
+                if pc not in self.occupation or self.occupation[pc] != state:
+                    processed_occ[pc] = state
+                    self.occupation[pc] = state
                 # TODO pull roomMap from ethergids instead of using these
                 # heuristics
                 roomBit, pcBit = pc.split('pc')
@@ -46,13 +47,16 @@ class State(Module):
                     roomMap_changed = True
             if roomMap_changed:
                 roomMap = dict(self.roomMap)
-            version = self.version
         if roomMap_changed:
-            self.on_roomMap_changed(roomMap, version)
-        self.on_occupation_changed(processed_occ, source, version)
+            self.roomMapVersion += 1
+            self.on_roomMap_changed(roomMap, self.roomMapVersion)
+        if processed_occ:
+            self.occupationVersion += 1
+            self.on_occupation_changed(processed_occ, source,
+                            self.occupationVersion)
     def get_occupation(self):
         with self.lock:
-            return (dict(self.occupation), self.version)
+            return (dict(self.occupation), self.occupationVersion)
     def get_roomMap(self):
         with self.lock:
-            return (dict(self.roomMap), self.version)
+            return (dict(self.roomMap), self.roomMapVersion)
