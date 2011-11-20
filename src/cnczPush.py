@@ -44,17 +44,24 @@ class CnczPushRH(BaseHTTPRequestHandler):
         data = json.loads(raw_data)
         occ = {}
         for pc, state in data['data'].iteritems():
+            expect_session = False
             if state['status'] == 'offline':
                 s = 'o'
             elif state['status'] == 'free':
                 s = 'f'
+                expect_session = True
+            elif state['status'] == 'used':
+                s = 'u'
+                expect_session = True
             elif state['status'] == 'unknown':
-                s = '?'
+                s = 'x'
             if hasattr(state, 'session'):
                 if state['session'] == 'windows':
                     s = 'w' + s
                 elif state['session'] == 'linux':
                     s = 'l' + s
+            elif expect_session:
+                s = 'w' + s # XXX
             occ[pc] = s
         self.server._push(occ, data.get('datasource', 'unknown'))
         self.l.info("Pushed %s entries; source %s" % (len(data['data']),
