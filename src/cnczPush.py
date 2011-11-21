@@ -37,24 +37,31 @@ class CnczPushRH(BaseHTTPRequestHandler):
         if not 'Content-Length' in self.headers:
             return self._respond_simple(500, "No Content-Length")
         # TODO we should add better authentication and not hardcode this
-        if not self.addr[0] in ('127.0.0.1', '131.174.30.41'):
+        if not self.addr[0] in ('127.0.0.1', '131.174.30.41',
+                                    '131.174.16.130'):
             return self._respond_simple(403, "Permission denied")
         # Read, parse, mangle and pass through
         raw_data = self.rfile.read(int(self.headers['Content-Length']))
         data = json.loads(raw_data)
         occ = {}
+        source = data.get('datasource', 'unknown')
         for pc, state in data['data'].iteritems():
-            expect_session = False
-            if state['status'] == 'offline':
+            expect_session = True
+            if 'event' in state:
+                if state['event'] == 'logon':
+                    s = 'u'
+                elif state['event'] == 'logoff':
+                    s = 'f'
+            elif state['status'] == 'offline':
                 s = 'o'
+                expect_session = False
             elif state['status'] == 'free':
                 s = 'f'
-                expect_session = True
             elif state['status'] == 'used':
                 s = 'u'
-                expect_session = True
             elif state['status'] == 'unknown':
                 s = 'x'
+                expect_session = False
             if 'session' in state:
                 if state['session'] == 'windows':
                     s = 'w' + s
@@ -63,9 +70,8 @@ class CnczPushRH(BaseHTTPRequestHandler):
             elif expect_session:
                 s = 'w' + s # XXX
             occ[pc] = s
-        self.server._push(occ, data.get('datasource', 'unknown'))
-        self.l.info("Pushed %s entries; source %s" % (len(data['data']),
-                        data.get('datasource', 'unknown')))
+        self.server._push(occ, source)
+        self.l.info("Pushed %s entries; source %s" % (len(data['data']),source))
         self._respond_simple(200, 'true')
 
     def _respond_simple(self, code, message):
