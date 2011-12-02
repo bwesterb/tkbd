@@ -5,3 +5,5 @@ definitions:
   ruuster:
     inherits: [ schedule ]
     implementedBy: tkbd.ruuster.Ruuster
+    settings:
+      url: { type: str, default: 'http://api.ruuster.nl' }
