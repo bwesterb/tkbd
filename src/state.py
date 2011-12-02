@@ -20,6 +20,7 @@ class State(Module):
         processed_occ = {}
         with self.lock:
             for pc, state in occ.iteritems():
+                pc = pc.lower() # normalize HG075PC47 -> hg075pc47
                 # TODO do not hardcode this
                 if pc.startswith('cz'):
                     continue
