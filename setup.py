@@ -17,7 +17,8 @@ setup(name='tkbd',
     package_dir={'tkbd': 'src'},
     install_requires = [
             'docutils>=0.3',
-            'mirte>=0.1.0a2',
-            'sarah>=0.1.0a2',
-            'joyce>=0.1.0a2'],
+            'mirte>=0.1.0a3',
+            'sarah>=0.1.0a3',
+            'msgpack-python>=0.1.10',
+            'joyce>=0.1.0a3'],
     )
