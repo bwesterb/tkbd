@@ -1,5 +1,6 @@
 # vim: et:sta:bs=2:sw=4:
 
+import time
 import threading
 
 from mirte.core import Module
@@ -10,11 +11,47 @@ class State(Module):
         super(State, self).__init__(*args, **kwargs)
         self.on_occupation_changed = Event()
         self.on_roomMap_changed = Event()
+        self.on_schedule_changed = Event()
         self.occupation = {}
         self.roomMap = {}
+        self._schedule = {}
         self.occupationVersion = 0
         self.roomMapVersion = 0
+        self.scheduleVersion = 0
         self.lock = threading.Lock()
+        self.running = False
+    def run(self):
+        self.running = True
+        self._pull_schedule_loop()
+    def stop(self):
+        self.running = False
+    def _pull_schedule_loop(self):
+        self.pull_schedule()
+        if not self.running:
+            return
+        self.scheduler.plan(time.time() + 60*60*16, self._pull_schedule_loop)
+    def pull_schedule(self):
+        # We do not want to hold the lock while fetching the new schedule,
+        # for that may block for a while.  However, if we do not take the
+        # lock, the rooms may have changed in the meantime.  Thus we will
+        # simply keep trying until the rooms weren't changed in the mean
+        # time.
+        while True:
+            with self.lock:
+                rooms = self.roomMap.keys()
+                roomMapVersion = self.roomMapVersion
+            schedule = self.schedule.fetch_todays_schedule(rooms)
+            with self.lock:
+                if self.roomMapVersion != roomMapVersion:
+                    continue # rooms were changed in the meantime
+                if schedule == self._schedule:
+                    break # Nothing changed
+                self.l.info("Pulled new schedule; version %s",
+                            self.scheduleVersion)
+                self._schedule = schedule
+                self.scheduleVersion += 1
+                self.on_schedule_changed(schedule, self.scheduleVersion)
+                break
     def push_occupation_changes(self, occ, source='unknown'):
         roomMap_changed = False
         processed_occ = {}
@@ -51,6 +88,7 @@ class State(Module):
         if roomMap_changed:
             self.roomMapVersion += 1
             self.on_roomMap_changed(roomMap, self.roomMapVersion)
+            self.pull_schedule()
         if processed_occ:
             self.occupationVersion += 1
             self.on_occupation_changed(processed_occ, source,
@@ -61,3 +99,6 @@ class State(Module):
     def get_roomMap(self):
         with self.lock:
             return (dict(self.roomMap), self.roomMapVersion)
+    def get_schedule(self):
+        with self.lock:
+            return (dict(self._schedule), self.scheduleVersion)
