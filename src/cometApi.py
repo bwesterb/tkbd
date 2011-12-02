@@ -27,6 +27,7 @@ class CometApiChannelClass(JoyceChannel):
             'protocols': [0]})
         self._send_roomMap()
         self._send_occupation()
+        self._send_schedule()
 
     def handle_message(self, data):
         if data['type'] == 'get_occupation':
