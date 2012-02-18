@@ -1,0 +1,18 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+includes:
+  - tkbd/state
+  - tkbd/cnczPush
+  - tkbd/ruuster
+  - tkbd/cometApi
+instances:
+  state:
+    module: state
+    schedule: ruuster
+  ruuster:
+    module: ruuster
+  cnczPush:
+    module: cnczPush
+    state: state
+  cometApi:
+    module: cometApi
+    state: state

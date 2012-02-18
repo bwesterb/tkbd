@@ -1,0 +1,18 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+includes:
+  - tkbd/state
+  - tkbd/ruuster
+  - tkbd/cometApi
+  - tkbd/mirror
+instances:
+  state:
+    module: state
+    schedule: ruuster
+  ruuster:
+    module: ruuster
+  mirror:
+    module: mirror
+    state: state
+  cometApi:
+    module: cometApi
+    state: state
