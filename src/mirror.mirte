@@ -1,0 +1,10 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+includes:
+  - joyce/comet
+definitions:
+  mirror:
+    inherits: [ cometJoyceClient ]
+    implementedBy: tkbd.mirror.Mirror
+    settings:
+      host: { default: 'tk.science.ru.nl' }
+      state: { type: state }
