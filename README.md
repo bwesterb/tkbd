@@ -62,35 +62,35 @@ Every messages sent by `tkbd` is one of the following. See `cometApi.py`.
 
 1. `{"type": "welcome", "protocols" : [0]}`
 
-   This is the first message sent. It tells which protocols `tkbd` understands.
-   Currently, there is only protocol: `0`.
+    This is the first message sent. It tells which protocols `tkbd` understands.
+    Currently, there is only protocol: `0`.
 
 2. `{"type": "occupation", "version": <version>, "occupation": <occupation>}`
 
-   This is one of the first messages sent.  It contains the current
-   occupation of PC's. `occupation` is a dictionary with as keys names of
-   PC's and as values the state of the corresponding PC's.
+    This is one of the first messages sent.  It contains the current
+    occupation of PC's. `occupation` is a dictionary with as keys names of
+    PC's and as values the state of the corresponding PC's.
 
 3. `{"type": "roomMap", "version": <version>, "roomMap": <roomMap>}`
 
-   This is one of the first messages sent. `roomMap` is a dictionary
-   with as keys names of rooms and as values the corresponding list
-   of PC's in that room.
+    This is one of the first messages sent. `roomMap` is a dictionary
+    with as keys names of rooms and as values the corresponding list
+    of PC's in that room.
 
 4. `{"type": "schedule", "version": <version>, "schedule": <schedule>}`
 
-   This is one of the first messages sent. `schedule` is a dictionary
-   with as keys names of rooms and as values the corresponding
-   schedule of that room.  A schedule of a room is a list of events.
-   An event is a list with three element: the first element is the starting
-   time; the second is the ending time and the third is a decription of
-   the event.
+    This is one of the first messages sent. `schedule` is a dictionary
+    with as keys names of rooms and as values the corresponding
+    schedule of that room.  A schedule of a room is a list of events.
+    An event is a list with three element: the first element is the starting
+    time; the second is the ending time and the third is a decription of
+    the event.
 
 5. `{"type": "occupation_update", "version": <version>, "update": <update>}`
 
-   This  message is sent, when the occupation of one or more PCs changes.
-   `update` is a dictionary with as keys PC names and as values the
-   new state of the corresponding PC.
+    This  message is sent, when the occupation of one or more PCs changes.
+    `update` is a dictionary with as keys PC names and as values the
+    new state of the corresponding PC.
 
 On every update of the occupation, roomMap or schedule, the corresponding
 version is incremented by one.  A client should check whether
@@ -100,11 +100,11 @@ the following.
 #### Messages received by `tkbd`
 1. `{"type": "get_occupation"}`
 
-   When received, the server will send in return an `occupation` message.
+    When received, the server will send in return an `occupation` message.
 
 2. `{"type": "get_roomMap"}`
 
-   When received, the server will send in return a `roomMap` message.
+    When received, the server will send in return a `roomMap` message.
 
 How to install it
 -----------------
