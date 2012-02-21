@@ -10,13 +10,16 @@ class MirrorChannelClass(JoyceChannel):
         super(MirrorChannelClass, self).__init__(*args, **kwargs)
         self.server = server
         self.msg_map = {
-                'occupation': self._msg_occupation }
+                'occupation': self._msg_occupation,
+                'occupation_update': self._msg_occupation_update }
     def handle_message(self, data):
         typ = data.get('type')
         if typ in self.msg_map:
             self.msg_map[typ](data)
     def _msg_occupation(self, data):
         self.server.state.push_occupation_changes(data['occupation'])
+    def _msg_occupation_update(self, data):
+        self.server.state.push_occupation_changes(data['update'])
         
 class Mirror(CometJoyceClient):
     def __init__(self, *args, **kwargs):
