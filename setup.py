@@ -18,7 +18,7 @@ setup(name='tkbd',
     zip_safe=False,
     package_dir={'tkbd': 'src'},
     package_data={
-        'tkbd': [f for f in findall(os.path.join(root,'tkbd'))
+        'tkbd': [f for f in findall(os.path.join(root,'src'))
                         if f.endswith('.mirte')]},
     install_requires = [
             'docutils>=0.3',
