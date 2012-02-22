@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: et:sta:bs=2:sw=4:
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, findall
 from get_git_version import get_git_version
 
 setup(name='tkbd',
@@ -14,6 +14,8 @@ setup(name='tkbd',
     packages=['tkbd'],
     zip_safe=False,
     package_dir={'tkbd': 'src'},
+    package_data={
+        'tkbd': [f for f in findall('tkbd') if f.endswith('.mirte')] },
     install_requires = [
             'docutils>=0.3',
             'mirte>=0.1.0a3',
