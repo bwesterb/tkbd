@@ -3,6 +3,9 @@
 
 from setuptools import setup, find_packages, findall
 from get_git_version import get_git_version
+import os.path
+
+root = os.path.abspath(os.path.dirname(__file__))
 
 setup(name='tkbd',
     version=get_git_version(),
@@ -15,7 +18,8 @@ setup(name='tkbd',
     zip_safe=False,
     package_dir={'tkbd': 'src'},
     package_data={
-        'tkbd': [f for f in findall('tkbd') if f.endswith('.mirte')] },
+        'tkbd': [f for f in findall(os.path.join(root,'tkbd'))
+                        if f.endswith('.mirte')]},
     install_requires = [
             'docutils>=0.3',
             'mirte>=0.1.0a3',
