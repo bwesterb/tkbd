@@ -15,7 +15,6 @@ def find_package_data():
                 s.append(os.path.join(p, c))
             elif c.endswith('.mirte'):
                 r.append(os.path.join(p, c))
-    print r
     return r
 
 setup(name='tkbd',
@@ -32,7 +31,7 @@ setup(name='tkbd',
     install_requires = [
             'docutils>=0.3',
             'mirte>=0.1.0a3',
-            'sarah>=0.1.1',
+            'sarah>=0.1.2',
             'msgpack-python>=0.1.10',
-            'joyce>=0.1.1'],
+            'joyce>=0.1.2'],
     )
