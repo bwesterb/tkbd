@@ -12,7 +12,7 @@ How it works
 `tkbd` maintains three bits of information. See `state.py`.
 
 1. *occupation*: for each PC its current state, which is either:
-   - `o` the PC is turend off
+   - `o` the PC is turned off
    - `x` the PC is in an unknown state
    - `wf` the PC is free and booted in Windows
    - `lf` the PC is free and booted in Linux
