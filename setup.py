@@ -12,7 +12,6 @@ setup(name='tkbd',
     author_email='bas@westerbaan.name',
     url='http://github.com/bwesterb/tkbd',
     packages=['tkbd'],
-    package_data={'': ['*.mirte']},
     zip_safe=False,
     package_dir={'tkbd': 'src'},
     install_requires = [

@@ -144,4 +144,5 @@ Changelog
 ---------
 * Second release
   * Support for mirroring
+  * Fix some bugs
   * ...
