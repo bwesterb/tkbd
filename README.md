@@ -31,7 +31,7 @@ HTTP requests on port 1235. See `cnczPush.py`.
 Secondly, another script periodically polls all PCs.
 The results of this scan are also pushed to port 1235.
 
-The schedule is pulled from (Ruuster)[http://ruuster.nl].
+The schedule is pulled from [Ruuster](http://ruuster.nl).
 See `ruuster.py`.
 
 ### How to access it
