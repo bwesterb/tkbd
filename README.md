@@ -142,7 +142,6 @@ in `src/setups`.
 
 Changelog
 ---------
-* Second release
+* 0.2.0
   * Support for mirroring
   * Fix some bugs
-  * ...
