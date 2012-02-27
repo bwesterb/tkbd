@@ -12,7 +12,7 @@ How it works
 `tkbd` maintains three bits of information. See `state.py`.
 
 1. *occupation*: for each PC its current state, which is either:
-   - `o` the PC is turend off
+   - `o` the PC is turned off
    - `x` the PC is in an unknown state
    - `wf` the PC is free and booted in Windows
    - `lf` the PC is free and booted in Linux
@@ -31,7 +31,7 @@ HTTP requests on port 1235. See `cnczPush.py`.
 Secondly, another script periodically polls all PCs.
 The results of this scan are also pushed to port 1235.
 
-The schedule is pulled from (Ruuster)[http://ruuster.nl].
+The schedule is pulled from [Ruuster](http://ruuster.nl).
 See `ruuster.py`.
 
 ### How to access it
