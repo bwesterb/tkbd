@@ -142,6 +142,9 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.2.3
+  * Fix: properly package .mirte files
+  * Fix: send proper start and ending times for the scheduled events
 * 0.2.0
   * Support for mirroring
   * Fix some bugs

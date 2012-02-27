@@ -12,9 +12,9 @@ def prepare_schedule(schedule):
         ret[room] = []
         for event in schedule[room]:
             ret[room].append(((event[0].hour,
-                                event[0].second),
+                                event[0].minute),
                              (event[1].hour,
-                              event[1].second),
+                              event[1].minute),
                              event[2]))
     return ret
 
