@@ -13,6 +13,7 @@ instances:
   mirror:
     module: mirror
     state: state
+    keepTrying: true
   cometApi:
     module: cometApi
     state: state
