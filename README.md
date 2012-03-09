@@ -144,7 +144,7 @@ Changelog
 ---------
 * 0.2.4
   * Fix: keep mirror running if master is down for a while
-  * ...
+  * Fix: ignore PCs with names ending with `docent'
 * 0.2.3
   * Fix: properly package .mirte files
   * Fix: send proper start and ending times for the scheduled events

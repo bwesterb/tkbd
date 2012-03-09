@@ -58,8 +58,10 @@ class State(Module):
         with self.lock:
             for pc, state in occ.iteritems():
                 pc = pc.lower() # normalize HG075PC47 -> hg075pc47
-                # TODO do not hardcode this
+                # TODO do not hardcode this and put in the client
                 if pc.startswith('cz'):
+                    continue
+                if pc.endswith('docent'):
                     continue
                 if pc not in self.occupation or self.occupation[pc] != state:
                     processed_occ[pc] = state
