@@ -9,15 +9,19 @@ from sarah.event import Event
 class State(Module):
     def __init__(self, *args, **kwargs):
         super(State, self).__init__(*args, **kwargs)
+        # events
         self.on_occupation_changed = Event()
         self.on_roomMap_changed = Event()
         self.on_schedule_changed = Event()
+        # state
         self.occupation = {}
         self.roomMap = {}
         self._schedule = {}
+        # versioning
         self.occupationVersion = 0
         self.roomMapVersion = 0
         self.scheduleVersion = 0
+        # misc
         self.lock = threading.Lock()
         self.running = False
     def run(self):
