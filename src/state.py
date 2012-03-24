@@ -74,7 +74,7 @@ class State(Module):
                 # heuristics
                 roomBit, pcBit = pc.split('pc')
                 room = {'hg761': 'HG03.761',
-                    'hg206': 'HG02.206',
+                    'hg206': 'HG00.206',
                     'hg201': 'HG00.201',
                     'hg153': 'HG00.153',
                     'hg137': 'HG00.137',
