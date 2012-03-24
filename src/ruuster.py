@@ -70,5 +70,5 @@ class Ruuster(Module):
 if __name__ == '__main__':
     r = Ruuster({'url': 'http://api.ruuster.nl'}, None)
     import pprint
-    pprint.pprint(r.fetch_todays_schedule(['HG00.075', 'HG00.201', 'HG02.206',
+    pprint.pprint(r.fetch_todays_schedule(['HG00.075', 'HG00.201', 'HG00.206',
                 'HG00.153', 'HG00.137', 'HG00.023', 'HG03.761', 'HG00.029']))
