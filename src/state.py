@@ -74,15 +74,15 @@ class State(Module):
                 # heuristics
                 roomBit, pcBit = pc.split('pc')
                 room = {'hg761': 'HG03.761',
-                    'hg206': 'HG00.206',
-                    'hg201': 'HG00.201',
-                    'hg153': 'HG00.153',
-                    'hg137': 'HG00.137',
-                    'hg075': 'HG00.075',
-                    'hg029': 'HG00.029',
-                    'hg023': 'HG00.023',
-                    'bib': 'Bibliotheek',
-                    'info': 'Infozuilen'}.get(roomBit, roomBit)
+                        'hg206': 'HG00.206',
+                        'hg201': 'HG00.201',
+                        'hg153': 'HG00.153',
+                        'hg137': 'HG00.137',
+                        'hg075': 'HG00.075',
+                        'hg029': 'HG00.029',
+                        'hg023': 'HG00.023',
+                        'bib': 'Bibliotheek',
+                        'info': 'Infozuilen'}.get(roomBit, roomBit)
                 if not room in self.roomMap:
                     self.roomMap[room] = []
                     roomMap_changed = True
