@@ -21,9 +21,12 @@ class State(Module):
         self.occupationVersion = 0
         self.roomMapVersion = 0
         self.scheduleVersion = 0
-        # misc
-        self.lock = threading.Lock()
+        # internal state
+        self.pulling_schedule = False
+        self.rooms_considered_for_schedule = None
         self.running = False
+        # locks
+        self.lock = threading.Lock()
     def run(self):
         self.running = True
         self._pull_schedule_loop()
@@ -42,12 +45,20 @@ class State(Module):
         # time.
         while True:
             with self.lock:
+                if self.pulling_schedule:
+                    self.l.warning("Already pulling schedule")
+                    return
                 rooms = self.roomMap.keys()
+                if not rooms:
+                    return
+                self.pulling_schedule = True
                 roomMapVersion = self.roomMapVersion
             schedule = self.schedule.fetch_todays_schedule(rooms)
             with self.lock:
-                if self.roomMapVersion != roomMapVersion:
+                self.pulling_schedule = False
+                if rooms != self.roomMap.keys():
                     continue # rooms were changed in the meantime
+                self.rooms_considered_for_schedule = rooms
                 if schedule == self._schedule:
                     break # Nothing changed
                 self.l.info("Pulled new schedule; version %s",
@@ -58,6 +69,7 @@ class State(Module):
                 break
     def push_occupation_changes(self, occ, source='unknown'):
         roomMap_changed = False
+        pull_new_schedule = False
         processed_occ = {}
         with self.lock:
             for pc, state in occ.iteritems():
@@ -90,15 +102,19 @@ class State(Module):
                     self.roomMap[room].append(pc)
                     roomMap_changed = True
             if roomMap_changed:
+                self.roomMapVersion += 1
                 roomMap = dict(self.roomMap)
+                if (self.rooms_considered_for_schedule != roomMap.keys() and
+                        not self.pulling_schedule):
+                    pull_new_schedule = True
         if roomMap_changed:
-            self.roomMapVersion += 1
             self.on_roomMap_changed(roomMap, self.roomMapVersion)
-            self.pull_schedule()
         if processed_occ:
             self.occupationVersion += 1
             self.on_occupation_changed(processed_occ, source,
                             self.occupationVersion)
+        if pull_new_schedule:
+            self.pull_schedule()
     def get_occupation(self):
         with self.lock:
             return (dict(self.occupation), self.occupationVersion)
