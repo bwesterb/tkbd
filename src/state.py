@@ -36,7 +36,7 @@ class State(Module):
         self.pull_schedule()
         if not self.running:
             return
-        self.scheduler.plan(time.time() + 60*60*16, self._pull_schedule_loop)
+        self.scheduler.plan(time.time() + 60*16, self._pull_schedule_loop)
     def pull_schedule(self):
         # We do not want to hold the lock while fetching the new schedule,
         # for that may block for a while.  However, if we do not take the
