@@ -142,6 +142,8 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.1
+   * Fix: special `null' tag filter to disable filter is properly set
 * 0.3.0
   * Feature: add tags.  This will allow multiple `screens' running on the
     same tkbd.

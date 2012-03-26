@@ -75,11 +75,17 @@ class CometApiChannelClass(JoyceChannel):
         if data['type'] == 'set_msgFilter':
             tagMap = self.server.state.get_tagMap()[0]
             for k in ('occupation', 'schedule', 'roomMap'):
-                if k in data and isinstance(data[k], list):
-                    self._unregister_listener(k, self.msgFilter[k])
-                    self.msgFilter[k] = [x for x in data[k]
-                                            if x in self.server.state.tagMap]
-                    self._register_listener(k, self.msgFilter[k])
+                if k not in data:
+                    continue
+                if isinstance(data[k], list):
+                    tags = [x for x in data[k] if x in self.server.state.tagMap]
+                elif data[k] is None:
+                    tags = None
+                else:
+                    continue
+                self._unregister_listener(k, self.msgFilter[k])
+                self.msgFilter[k] = tags
+                self._register_listener(k, self.msgFilter[k])
         elif data['type'] == 'get_occupation':
             self._send_occupation()
         elif data['type'] == 'get_roomMap':
