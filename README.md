@@ -142,6 +142,9 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.0
+  * Feature: add tags.  This will allow multiple `screens' running on the
+    same tkbd.
 * 0.2.4
   * Fix: keep mirror running if master is down for a while
   * Fix: ignore PCs with names ending with `docent'
