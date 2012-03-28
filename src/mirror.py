@@ -12,6 +12,9 @@ class MirrorChannelClass(JoyceChannel):
         self.msg_map = {
                 'occupation': self._msg_occupation,
                 'occupation_update': self._msg_occupation_update }
+        self.send_message({'type': 'set_msgFilter',
+                           'occupation': None})
+        self.send_message({'type': 'get_occupation'})
     def handle_message(self, data):
         typ = data.get('type')
         if typ in self.msg_map:
