@@ -142,6 +142,8 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.2
+   * Fix: do not crash on new schedule.
 * 0.3.1
    * Fix: special `null' tag filter to disable filter is properly set
 * 0.3.0

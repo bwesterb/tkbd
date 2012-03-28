@@ -119,7 +119,7 @@ class CometApiChannelClass(JoyceChannel):
         self.send_message({
             'type': 'schedule',
             'version': version,
-            'schedule': schedule})
+            'schedule': prepare_schedule(schedule)})
     def _send_roomMap(self):
         roomMap, version = self.server.state.get_roomMap(
                                 self.msgFilter['roomMap'])
