@@ -1,4 +1,5 @@
 # vim: et:sta:bs=2:sw=4:
+import re
 import urllib2
 import datetime
 
@@ -9,6 +10,13 @@ from sarah.cacheDecorators import cacheOnSameArgs
 from mirte.core import Module
 
 DAYS = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
+
+_normalize_event_re = [re.compile('NWI-[A-Z0-9]+ ')]
+def normalize_event_name(name):
+    """ Normalizes the names of reservations.
+        eg. "NWI-MOL066 Structure, Function and Bioinformatics"
+                --> "Structure, Function and Bioinformatics" """
+    return _normalize_event_re[0].sub('', name)
 
 class Ruuster(Module):
     @cacheOnSameArgs(60*60*24)
@@ -64,7 +72,7 @@ class Ruuster(Module):
                 if not ok:
                     continue
                 ret[room_name].append((starttime, endtime,
-                        event['course']['name']))
+                        normalize_event_name(event['course']['name'])))
         return ret
 
 if __name__ == '__main__':
