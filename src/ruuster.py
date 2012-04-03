@@ -9,6 +9,14 @@ from sarah.cacheDecorators import cacheOnSameArgs
 
 from mirte.core import Module
 
+from tkbd.state import ScheduleError
+
+class RuusterError(ScheduleError):
+    def __init__(self, inner_exception):
+        self.inner_exception = inner_exception
+    def __str__(self):
+        return "<RuusterError `%s'>" % self.inner_exception
+
 DAYS = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
 
 _normalize_event_re = [re.compile('NWI-[A-Z0-9]+ ')]
@@ -22,10 +30,13 @@ class Ruuster(Module):
     @cacheOnSameArgs(60*60*24)
     def fetch_inst_id(self):
         """ Fetches the institute id of the RU """
-        for d in msgpack.unpack(urllib2.urlopen(
-                "%s/list/institutes?format=msgpack" % self.url)):
-            if d['name'] == 'Radboud Universiteit Nijmegen':
-                return d['id']
+        try:
+            for d in msgpack.unpack(urllib2.urlopen(
+                    "%s/list/institutes?format=msgpack" % self.url)):
+                if d['name'] == 'Radboud Universiteit Nijmegen':
+                    return d['id']
+        except urllib2.HTTPError, e:
+            raise RuusterError(e)
         assert False
 
     @cacheOnSameArgs(60*60)
@@ -33,11 +44,14 @@ class Ruuster(Module):
         """ Fetches the ids of the rooms with the given names """
         ret = {}
         names_set = set(names)
-        for d in msgpack.unpack(urllib2.urlopen(
-                "%s/list/locations?format=msgpack" % self.url)):
-            name = d['name'].upper() # normalize: Hg -> HG
-            if name in names_set:
-                ret[name] = d['id']
+        try:
+            for d in msgpack.unpack(urllib2.urlopen(
+                    "%s/list/locations?format=msgpack" % self.url)):
+                name = d['name'].upper() # normalize: Hg -> HG
+                if name in names_set:
+                    ret[name] = d['id']
+        except urllib2.HTTPError, e:
+            raise RuusterError(e)
         return ret
 
     @cacheOnSameArgs(60*15)
@@ -50,9 +64,12 @@ class Ruuster(Module):
         day = DAYS[now.isoweekday() - 1]
         for room_name in room_ids:
             ret[room_name] = []
-            events = msgpack.unpack(urllib2.urlopen(
-                "%s/snapshot/head/%s/location/%s?format=msgpack" % (
-                    self.url, inst_id, room_ids[room_name])))['events']
+            try:
+                events = msgpack.unpack(urllib2.urlopen(
+                    "%s/snapshot/head/%s/location/%s?format=msgpack" % (
+                        self.url, inst_id, room_ids[room_name])))['events']
+            except urllib2.HTTPError, e:
+                raise RuusterError(e)
             for event in events:
                 starttime = datetime.datetime.strptime(
                         event['starttime'], '%H:%M:%S').time()

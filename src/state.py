@@ -11,6 +11,9 @@ from sarah.event import Event
 
 roomMap_entry = collections.namedtuple('roomMap_entry', ('name', 'pcs'))
 
+class ScheduleError(Exception):
+    pass
+
 class State(Module):
     def __init__(self, *args, **kwargs):
         super(State, self).__init__(*args, **kwargs)
@@ -67,10 +70,16 @@ class State(Module):
     # ###############################################################
     def _pull_schedule_loop(self):
         """ Called every 16 minutes to pull a new version of the schedule """
-        self.pull_schedule()
+        try:
+            self.pull_schedule()
+            delay = 16*60
+        except ScheduleError, e:
+            self.l.exception("ScheduleError while pulling schedule.  "+
+                             "Retrying in 5m")
+            delay = 5*60
         if not self.running:
             return
-        self.scheduler.plan(time.time() + 60*16, self._pull_schedule_loop)
+        self.scheduler.plan(time.time() + delay, self._pull_schedule_loop)
     def pull_schedule(self):
         # We do not want to hold the lock while fetching the new schedule,
         # for that may block for a while.  However, if we do not take the
