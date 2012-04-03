@@ -142,6 +142,10 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.3:
+   * mirror: support tags
+   * ruuster: normalize event names
+   * ruuster: handle errors more gracefully
 * 0.3.2
    * Fix: do not crash on new schedule.
 * 0.3.1
