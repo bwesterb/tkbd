@@ -1,0 +1,8 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+definitions:
+  sqlite3History:
+    inherits: [ history ]
+    implementedBy: tkbd.sqlite3History.Sqlite3History
+    run: true
+    settings:
+      db: { type: str, default: history.sqlite3 }

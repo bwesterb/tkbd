@@ -61,6 +61,9 @@ class State(Module):
         self.running = False
         # locks
         self.lock = threading.Lock()
+        # Get occupation from history
+        self.push_occupation_changes(self.history.get_occupation(), 'history',
+                                        initial_history_push=True)
     def run(self):
         self.running = True
         self._pull_schedule_loop()
@@ -216,7 +219,8 @@ class State(Module):
             self.roomMap_listeners[_filter].remove(cb)
     # Handle changes to occupation
     # ###############################################################
-    def push_occupation_changes(self, occ, source='unknown'):
+    def push_occupation_changes(self, occ, source='unknown',
+                                    initial_history_push=False):
         roomMap_changed = False
         pull_new_schedule = False
         processed_occ = {}
@@ -255,7 +259,10 @@ class State(Module):
             self.occupationVersion += 1
             self._on_occupation_changed(processed_occ, source,
                                         self.occupationVersion)
-        if pull_new_schedule:
+            if not initial_history_push:
+                self.history.record_occupation_updates(processed_occ,
+                        source, self.occupationVersion)
+        if pull_new_schedule and not initial_history_push:
             self.pull_schedule()
     # Data accessors
     # ###############################################################

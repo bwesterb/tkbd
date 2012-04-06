@@ -4,10 +4,12 @@ includes:
   - tkbd/ruuster
   - tkbd/cometApi
   - tkbd/mirror
+  - tkbd/sqlite3History
 instances:
   state:
     module: state
     schedule: ruuster
+    history: history
   ruuster:
     module: ruuster
   mirror:
@@ -17,3 +19,5 @@ instances:
   cometApi:
     module: cometApi
     state: state
+  history:
+    module: sqlite3History

@@ -4,10 +4,12 @@ includes:
   - tkbd/cnczPush
   - tkbd/ruuster
   - tkbd/cometApi
+  - tkbd/sqlite3History
 instances:
   state:
     module: state
     schedule: ruuster
+    history: history
   ruuster:
     module: ruuster
   cnczPush:
@@ -16,3 +18,5 @@ instances:
   cometApi:
     module: cometApi
     state: state
+  history:
+    module: sqlite3History
