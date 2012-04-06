@@ -58,14 +58,12 @@ class Sqlite3History(Module):
         if not name in self.pc2id_lut:
             self.c.execute("INSERT INTO pcs (name) VALUES ( ? )", (name,))
             self.pc2id_lut[name] = self.c.lastrowid
-            self.conn.commit()
         return self.pc2id_lut[name]
     def _id_for_source(self, name):
         """ Given the name of the source, return the database identifier. """
         if not name in self.source2id_lut:
             self.c.execute("INSERT INTO sources (name) VALUES ( ? )", (name,))
             self.source2id_lut[name] = self.c.lastrowid
-            self.conn.commit()
         return self.source2id_lut[name]
 
     def get_occupation(self):
@@ -106,7 +104,7 @@ class Sqlite3History(Module):
         self.recordCond.acquire()
         while self.running or self.recordQueue:
             # Check for new entries.  If none: wait.
-            if not self.recordQueue:
+            if self.running and not self.recordQueue:
                 self.recordCond.wait()
                 continue
             entries = list(reversed(self.recordQueue))
