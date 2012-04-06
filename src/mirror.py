@@ -20,6 +20,8 @@ class MirrorChannelClass(JoyceChannel):
         if typ in self.msg_map:
             self.msg_map[typ](data)
     def _msg_occupation(self, data):
+        self.l.info("Received occupation message: %s entries",
+                            len(data['occupation']))
         self.server.state.push_occupation_changes(data['occupation'])
     def _msg_occupation_update(self, data):
         self.server.state.push_occupation_changes(data['update'])
