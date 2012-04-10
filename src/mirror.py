@@ -11,7 +11,11 @@ class MirrorChannelClass(JoyceChannel):
         self.server = server
         self.msg_map = {
                 'occupation': self._msg_occupation,
+                'welcome': self._msg_welcome,
                 'occupation_update': self._msg_occupation_update }
+        self.received_welcome = False
+        self._send_initial_messages()
+    def _send_initial_messages(self):
         self.send_message({'type': 'set_msgFilter',
                            'occupation': None})
         self.send_message({'type': 'get_occupation'})
@@ -19,6 +23,14 @@ class MirrorChannelClass(JoyceChannel):
         typ = data.get('type')
         if typ in self.msg_map:
             self.msg_map[typ](data)
+    def _msg_welcome(self, data):
+        if not self.received_welcome:
+            self.received_welcome = True
+            return
+        # This could have happened if the mirrored server restarted.
+        self.l.warn("Received another `welcome' message: the channel has "+
+                    "been reset.")
+        self._send_initial_messages()
     def _msg_occupation(self, data):
         self.l.info("Received occupation message: %s entries",
                             len(data['occupation']))
