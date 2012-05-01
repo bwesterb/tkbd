@@ -142,6 +142,8 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.5:
+   * Some minor improvements and bugfixes in the history and mirror modules
 * 0.3.4:
    * keep history of occupation updates in a SQQLite3 database
 * 0.3.3:
