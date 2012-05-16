@@ -22,6 +22,9 @@ How it works
    - `lx` the PC is booted in Linux, but we do not know if it is used
 2. *roomMap*: a list of rooms and the PC's in it.
 3. *schedule*: for each room, the possible reservations of it.
+4. *tagMap*: a list of tags and the rooms belonging to each tag.
+   For instance, in the `hg` tag (which is short for Huygens Gebouw)
+   are all the rooms of the Huygens Gebouw.
 
 ### Source of information
 When people log in and out of computers, this is logged.
@@ -57,54 +60,95 @@ to eachother.
 
 So, what messages does `tkbd` send and `tkbd` likes to receive?
 
+#### Messages received by `tkbd`
+These are the messages understood by `tkbd`.  See `cometApi.py`.
+
+1. `{"type": "set_msgFilter", "schedule":filter1, "roomMap":filter2, "occupation":filter3}`
+
+    When checking the occupation of PC's in the Huygens Gebouw, one is not interested
+    occupation updates for PC's in other faculties.  When the server receives this
+    message, it will set a message filter for the three types of messages.  A filter
+    is either a list of tags to allow (eg. `["hg"]`) or `null` which means
+    "do not filter".
+    
+    The default filters are all `[]`.  That is: all rooms and PC's are filtered out and
+    thus no update is sent.
+    
+2. `{"type": "get_occupation"}`
+
+    When received, the server will send in return an `occupation` message.
+    (See below.)
+
+3. `{"type": "get_roomMap"}`
+
+    When received, the server will send in return a `roomMap` message.
+    (See below.)
+
+4. `{"type": "get_schedule"}`
+
+    When received, the server will send in return a `schedule` message.
+    (See below.)
+
+5. `{"type": "get_tag_names"}`
+
+    When received, the server will send in return a `tags` message. (See below.)
+
+6. `{"type": "get_tagMap"}`
+
+    When received, the server will send in return a `tagMap` message. (See below.)
+
+
 #### Messages sent by `tkbd`
 Every messages sent by `tkbd` is one of the following. See `cometApi.py`.
 
-1. `{"type": "welcome", "protocols" : [0]}`
+1. `{"type": "welcome", "protocols" : [1]}`
 
     This is the first message sent. It tells which protocols `tkbd` understands.
-    Currently, there is only protocol: `0`.
+    Currently, there is only protocol supported: `1`.
 
 2. `{"type": "occupation", "version": <version>, "occupation": <occupation>}`
 
-    This is one of the first messages sent.  It contains the current
-    occupation of PC's. `occupation` is a dictionary with as keys names of
-    PC's and as values the state of the corresponding PC's.
+    It contains the current occupation of PC's. `occupation` is a dictionary
+    with as keys names of PC's and as values the state of the corresponding PC's.
+    Only PC's are included that match the current `occupation` filter.
+    (See `set_msgFilter`.)
 
 3. `{"type": "roomMap", "version": <version>, "roomMap": <roomMap>}`
 
-    This is one of the first messages sent. `roomMap` is a dictionary
-    with as keys names of rooms and as values the corresponding list
-    of PC's in that room.
+    `roomMap` is a dictionary with as keys names of rooms and as values the
+    corresponding list of PC's in that room.  Only PC's are included that
+    match the current `roomMap` filter. (See `set_msgFilter`.)
 
 4. `{"type": "schedule", "version": <version>, "schedule": <schedule>}`
 
-    This is one of the first messages sent. `schedule` is a dictionary
-    with as keys names of rooms and as values the corresponding
-    schedule of that room.  A schedule of a room is a list of events.
+    `schedule` is a dictionary with as keys names of rooms and as values the
+    corresponding schedule of that room.  A schedule of a room is a list of
+    events.
     An event is a list with three element: the first element is the starting
     time; the second is the ending time and the third is a decription of
     the event.
+    Only rooms are included that match the current `schedule` filter.
+    (See `set_msgFilter`.)
 
 5. `{"type": "occupation_update", "version": <version>, "update": <update>}`
 
     This  message is sent, when the occupation of one or more PCs changes.
     `update` is a dictionary with as keys PC names and as values the
     new state of the corresponding PC.
+    Only updates are sent for PC's that match the current `occupation` filter.
+    (See `set_msgFilter`.)
 
-On every update of the occupation, roomMap or schedule, the corresponding
-version is incremented by one.  A client should check whether
-it has missed an update.  And if so, resynchronize by using one of
-the following.
+6.  `{"type": "tags", "tags": <tags>}`
 
-#### Messages received by `tkbd`
-1. `{"type": "get_occupation"}`
+    This is the second message sent.  `tags` is the list of tags.
 
-    When received, the server will send in return an `occupation` message.
+7.  `{"type": "tagMap", "tagMap": <tagMap>}`
 
-2. `{"type": "get_roomMap"}`
+    `tagMap` is a dictionary with as keys names of tags and as values the
+    corresponding list of rooms that have the tag.
 
-    When received, the server will send in return a `roomMap` message.
+On every update of the occupation, roomMap, tagMap or schedule, the
+corresponding version is incremented by one.
 
 How to install it
 -----------------
