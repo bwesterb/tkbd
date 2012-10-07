@@ -96,6 +96,17 @@ class CometApiChannelClass(JoyceChannel):
             self._send_tag_names()
         elif data['type'] == 'get_tagMap':
             self._send_tagMap()
+        elif data['type'] == 'get_historic_updates':
+            offset = max(0, int(data.get('offset', 0)))
+            count = min(1000, max(0, int(data.get('count', 1000))))
+            self._send_historic_updates(offset, count)
+    def _send_historic_updates(self, offset, count):
+        self.send_message({
+            'type': 'historic_updates',
+            'offset': offset,
+            'count': count,
+            'updates': self.server.state.history.get_occupation_updates(
+                                offset, count)})
     def _send_tagMap(self):
         tagMap, version = self.server.state.get_tagMap()
         self.send_message({

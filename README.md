@@ -97,6 +97,11 @@ These are the messages understood by `tkbd`.  See `cometApi.py`.
 
     When received, the server will send in return a `tagMap` message. (See below.)
 
+7. `{"type": "get_historic_updates", "offset": <offset>, "count": <count>}`
+
+    When received, the server will send in return a `historic_updates` message.
+    (See below.)
+
 
 #### Messages sent by `tkbd`
 Every messages sent by `tkbd` is one of the following. See `cometApi.py`.
@@ -147,6 +152,12 @@ Every messages sent by `tkbd` is one of the following. See `cometApi.py`.
     `tagMap` is a dictionary with as keys names of tags and as values the
     corresponding list of rooms that have the tag.
 
+8.  `{"type": "historic_updates", "count": <count>, "offset": <offset>, "updates": <updates>}`
+
+    This gives `count` historic updates from the `offset`th one.
+    `updates` is a list of quadrupels
+    `[<pc>, <source>, <unix timestamp>, <occupation>]`.
+
 On every update of the occupation, roomMap, tagMap or schedule, the
 corresponding version is incremented by one.
 
@@ -186,6 +197,8 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.6:
+   * Add get_historic_updates to API
 * 0.3.5:
    * Some minor improvements and bugfixes in the history and mirror modules
 * 0.3.4:
