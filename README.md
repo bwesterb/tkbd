@@ -197,6 +197,8 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.7:
+   * ruuster: handle more exceptions gracefully
 * 0.3.6:
    * Add get_historic_updates to API
 * 0.3.5:
