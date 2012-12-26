@@ -35,7 +35,7 @@ class Ruuster(Module):
                     "%s/list/institutes?format=msgpack" % self.url)):
                 if d['name'] == 'Radboud Universiteit Nijmegen':
                     return d['id']
-        except urllib2.HTTPError, e:
+        except IOError, e: # urllib2 exceptions are a subclass of IOError
             raise RuusterError(e)
         assert False
 
