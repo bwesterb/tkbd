@@ -197,6 +197,8 @@ in `src/setups`.
 
 Changelog
 ---------
+* 0.3.8:
+   * state: handle schedule exceptions correctly
 * 0.3.7:
    * ruuster: handle more exceptions gracefully
 * 0.3.6:
