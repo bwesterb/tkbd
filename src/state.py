@@ -100,7 +100,12 @@ class State(Module):
                     return
                 self.pulling_schedule = True
                 roomMapVersion = self.roomMapVersion
-            raw_schedule = self.schedule.fetch_todays_schedule(roomNames)
+            try:
+                raw_schedule = self.schedule.fetch_todays_schedule(roomNames)
+            except Exception as e:
+                with self.lock:
+                    self.pulling_schedule = False
+                    raise e
             with self.lock:
                 self.pulling_schedule = False
                 if roomKeys !=  self.roomMap.keys():
