@@ -34,6 +34,7 @@ class State(Module):
         #  The roomMap is partially hardcoded and updated on the fly by
         #  guesses.  TODO We should allow the sources to push roomMaps.
         self.roomMap = {'hg761':  roomMap_entry('HG03.761', set()),
+                        'hg702':  roomMap_entry('HG02.702', set()),
                         'hg206':  roomMap_entry('HG00.206', set()),
                         'hg201':  roomMap_entry('HG00.201', set()),
                         'hg153':  roomMap_entry('HG00.153', set()),
@@ -42,14 +43,14 @@ class State(Module):
                         'hg029':  roomMap_entry('HG00.029', set()),
                         'hg023':  roomMap_entry('HG00.023', set()),
                         'hgbib':  roomMap_entry('Bibliotheek', set()),
-                        'hginfo': roomMap_entry('Infozuilen', set()),
+                        'hg002':  roomMap_entry('Infozuilen', set()),
                         'none':   roomMap_entry('Onbekend', set())}
         #  { <room>: [<event>, ...] }
         self._schedule = {}
         #  { <tag>: [<room-id>, ...] }
-        self.tagMap = {'hg': set(['hg761', 'hg206', 'hg201', 'hg153',
+        self.tagMap = {'hg': set(['hg761', 'hg702', 'hg206', 'hg201', 'hg153',
                                   'hg137', 'hg075', 'hg029', 'hg023',
-                                  'hgbib', 'hginfo'])}
+                                  'hgbib', 'hg002'])}
         # versioning
         self.occupationVersion = 0
         self.roomMapVersion = 0
@@ -244,7 +245,8 @@ class State(Module):
                     # TODO do not hardcode this
                     room, pcBit = pc.split('pc')
                     room = {'bib': 'hgbib',
-                            'info': 'hginfo'}.get(room, room)
+                            'info': 'hg002',
+                            'hginfo': 'hg002'}.get(room, room)
                     if not room in self.roomMap:
                         self.l.warning('New room: %s', room)
                         self.roomMap[room] = roomMap_entry(room, set())
