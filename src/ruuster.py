@@ -88,8 +88,11 @@ class Ruuster(Module):
                         break
                 if not ok:
                     continue
+                name = event['course']['name']
+                if name == 'Reserveringen' and 'comment' in event:
+                    name = event['comment']
                 ret[room_name].append((starttime, endtime,
-                        normalize_event_name(event['course']['name'])))
+                        normalize_event_name(name)))
         return ret
 
 if __name__ == '__main__':
