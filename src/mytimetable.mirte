@@ -1,0 +1,10 @@
+# vim: et:sta:bs=2:sw=2:ft=yaml:
+includes:
+  - base
+definitions:
+  mytimetable:
+    inherits: [ schedule ]
+    implementedBy: tkbd.mytimetable.MyTimetable
+    settings:
+      url: { type: str, default: 'https://persoonlijkrooster-acc.ru.nl' }
+      apiToken: { type: str, default: 'sekreet' }

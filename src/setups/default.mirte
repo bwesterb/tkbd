@@ -2,16 +2,16 @@
 includes:
   - tkbd/state
   - tkbd/cnczPush
-  - tkbd/ruuster
+  - tkbd/mytimetable
   - tkbd/cometApi
   - tkbd/sqlite3History
 instances:
   state:
     module: state
-    schedule: ruuster
+    schedule: mytimetable
     history: history
-  ruuster:
-    module: ruuster
+  mytimetable:
+    module: mytimetable
   cnczPush:
     module: cnczPush
     state: state
