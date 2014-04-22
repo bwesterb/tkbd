@@ -1,16 +1,13 @@
 # vim: et:sta:bs=2:sw=4:
 import re
 import datetime
-
 import json
+import cStringIO as StringIO
 
 import pycurl
-import StringIO
 
 from sarah.cacheDecorators import cacheOnSameArgs
-
 from mirte.core import Module
-
 from tkbd.state import ScheduleError
 
 class MyTimetableError(ScheduleError):
@@ -27,29 +24,40 @@ def normalize_event_name(name):
     return _normalize_event_re[0].sub('', name)
 
 class MyTimetable(Module):
-    @cacheOnSameArgs(60*60*24)
-
     def open_url(self, url):
         """ Open's URL with apiToken in the headers """
-        c = pycurl.Curl()
-        c.setopt(pycurl.FAILONERROR, True)
-        c.setopt(pycurl.URL, "%s/api/v0/%s" % (self.url, url))
-        c.setopt(pycurl.HTTPHEADER, ["Accept:", "User-Agent: Welke.tk", "apiToken: %s" % self.apiToken])
-        b = StringIO.StringIO()
-        c.setopt(pycurl.WRITEFUNCTION, b.write)
-        c.setopt(pycurl.FOLLOWLOCATION, 1)
-        c.setopt(pycurl.MAXREDIRS, 5)
-        c.setopt(pycurl.SSLVERSION, pycurl.SSLVERSION_SSLv3)
-        c.setopt(pycurl.SSL_VERIFYPEER, 1)
-        c.setopt(pycurl.SSL_VERIFYHOST, 2)
-        c.perform()
-        return b.getvalue()
+        try:
+            c = pycurl.Curl()
+            c.setopt(pycurl.FAILONERROR, True)
+            c.setopt(pycurl.URL, "%s/api/v0/%s" % (self.url, url))
+            c.setopt(pycurl.HTTPHEADER, ["User-Agent: Welke.tk",
+                                         "apiToken: %s" % self.apiToken])
+            b = StringIO.StringIO()
+            c.setopt(pycurl.WRITEFUNCTION, b.write)
+            c.setopt(pycurl.FOLLOWLOCATION, 1)
+            c.setopt(pycurl.MAXREDIRS, 5)
+            
+            # Persoonlijkrooster only supports SSLv3, not the default SSLv23.
+            c.setopt(pycurl.SSLVERSION, pycurl.SSLVERSION_SSLv3) 
+            
+            # Verify authenticity of peer's certificate. (0 will not check it)
+            c.setopt(pycurl.SSL_VERIFYPEER, 1)
+            
+            # Verify that domain in URL matches to the Common Name Field or
+            # a Subject Alternate Name field in the certificate.
+            # (0 will not check it; 1 is an invalid value)
+            c.setopt(pycurl.SSL_VERIFYHOST, 2) 
+            c.perform()
+            return b.getvalue()
+        except pycurl.error, e:
+            raise MyTimetableError(e)
+        assert False
 
     @cacheOnSameArgs(60*60)
     def fetch_room_ids(self, names):
         """ Fetches the ids of the rooms with the given names """
         ret = {}
-        names_set = set(names)
+        names_set = frozenset(names)
         
         for d in json.loads(self.open_url('timetables?type=location'))['timetable']:
             name = d['hostKey']
@@ -74,12 +82,15 @@ class MyTimetable(Module):
             events = json.loads(self.open_url("timetables/%s?startDate=%s&endDate=%s" % (room_ids[room_name], nowStr, tomorrowStr)))
 
             for event in events:
-                starttime = datetime.datetime.fromtimestamp(event['startDate']/1000)
-                endtime = datetime.datetime.fromtimestamp(event['endDate']/1000)
+                starttime = datetime.datetime.fromtimestamp(event['startDate']/1000.0)
+                endtime = datetime.datetime.fromtimestamp(event['endDate']/1000.0)
 
                 description = event['activityDescription']
                 if description is None:
                     description = event['notes']
+                
+                if description is None:
+                    description = '( geen omschrijving )'
                 
                 ret[room_name].append((starttime, endtime, normalize_event_name(description)))
 

@@ -33,5 +33,7 @@ setup(name='tkbd',
             'mirte>=0.1.3',
             'sarah>=0.1.2',
             'msgpack-python>=0.1.10',
-            'joyce>=0.1.3'],
+            'joyce>=0.1.3',
+            # TODO current working version, older might work fine
+            'pycurl>=7.19.0'],
     )
