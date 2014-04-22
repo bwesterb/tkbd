@@ -200,7 +200,6 @@ Changelog
 * 0.3.10:
    * Add mytimetable to fetch schedule from mytimetable
      (eg. persoonlijkrooster.ru.nl).  By Wouter Geraedts.
-   * ...
 * 0.3.9
    * ruuster: use event comment when course name equals Reserveringen
    * state: updated rooms
