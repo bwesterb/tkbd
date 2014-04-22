@@ -6,5 +6,6 @@ definitions:
     inherits: [ schedule ]
     implementedBy: tkbd.mytimetable.MyTimetable
     settings:
+      userAgent: { type: str, default: 'tkbd' }
       url: { type: str, default: 'https://persoonlijkrooster-acc.ru.nl' }
       apiToken: { type: str, default: 'sekreet' }
